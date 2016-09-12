@@ -1,0 +1,101 @@
+body {
+    font-family:  "Times New Roman";
+    color: blue;
+    background-color: lightsteelblue;
+
+    float: left;
+    margin: 10px;
+    padding: 5px;
+    max-width: 2000px;
+    max-height: 300px;
+
+
+}
+
+img.logo:hover{
+    width: 225px;
+    height: 225px;
+    transition: .5s;
+
+}
+
+img.background{
+    position: absolute;
+    z-index: -1;
+    top:300px;
+    padding-left: 50px;
+    transform: rotate(7deg);
+    opacity: .5;
+}
+
+
+
+
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background-color: darkgrey;
+
+}
+li{
+    float: left;
+}
+
+li a{
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover{
+    background-color: lightgrey;
+}
+
+input:focus {
+    background-color: lightcyan;
+}
+input:valid{
+    border: 3px solid green;
+}
+input:invalid{
+    border: 3px solid red;
+}
+
+input.round{
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+h1 {
+    opacity: 0.9;
+}
+
+section{
+    padding: 25px 50px 75px;
+}
+
+table{
+  border-collapse: collapse;
+  width: 500;
+}
+th, td {
+    padding: 10px 50px 10px;
+    text-align: left;
+    border-bottom: 1px solid darkgrey;
+}
+
+tr:hover{
+  background-color: lightgrey;
+}
+
+footer{
+    position: fixed;
+    bottom:0;
+
+    width: 100%;
+    background-color: darkgray;
+}
