@@ -3,7 +3,6 @@ body {
     color: blue;
     background-color: lightsteelblue;
 
-    float: left;
     margin: 10px;
     padding: 5px;
     max-width: 2000px;
@@ -12,33 +11,18 @@ body {
 
 }
 
-img.logo:hover{
-    width: 225px;
-    height: 225px;
-    transition: .5s;
+footer{
+    position: fixed;
+    bottom:0;
 
+    width: 98%;
+    background-color: darkgray;
 }
 
-img.background{
-    position: absolute;
-    z-index: -1;
-    top:300px;
-    padding-left: 50px;
-    transform: rotate(7deg);
-    opacity: .5;
+h1 {
+    opacity: 0.9;
 }
 
-
-
-
-ul{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow:hidden;
-    background-color: darkgrey;
-
-}
 li{
     float: left;
 }
@@ -55,12 +39,26 @@ li a:hover{
     background-color: lightgrey;
 }
 
+img.background{
+    position: absolute;
+    z-index: -1;
+    top:300px;
+    padding-left: 50px;
+    transform: rotate(7deg);
+    opacity: .3;
+}
+
+img.logo:hover{
+    width: 225px;
+    height: 225px;
+    transition: .5s;
+
+}
+
 input:focus {
     background-color: lightcyan;
 }
-input:valid{
-    border: 3px solid green;
-}
+
 input:invalid{
     border: 3px solid red;
 }
@@ -70,8 +68,12 @@ input.round{
     border-radius: 3px;
 }
 
-h1 {
-    opacity: 0.9;
+input:valid{
+    border: 3px solid green;
+}
+
+p.color{
+	color:black;
 }
 
 section{
@@ -79,10 +81,13 @@ section{
 }
 
 table{
+
   border-collapse: collapse;
   width: 500;
+  position: static;
 }
 th, td {
+	
     padding: 10px 50px 10px;
     text-align: left;
     border-bottom: 1px solid darkgrey;
@@ -92,10 +97,24 @@ tr:hover{
   background-color: lightgrey;
 }
 
-footer{
-    position: fixed;
-    bottom:0;
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background-color: darkgrey;
 
-    width: 100%;
-    background-color: darkgray;
+}
+
+@media screen and (max-width: 500px) {
+    body {
+
+        font-size:18pt;
+    }
+    p {
+       font-size:18pt;
+    }
+    li{
+        font-size:18pt;
+    }
 }
