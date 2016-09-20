@@ -4,8 +4,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-    <title>Sign Up Page</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="webStyles.css">
+    <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
 </head>
 
 <header>
@@ -19,33 +20,79 @@
 
 <body>
 <form>
-
     <h1>
         Sign Up
     </h1>
+    <section>
+        <div>
+            <ul class="tabs">
+                <li><a class ="tab" href="#student">Student Form</a></li>
+                <li><a class ="tab" href="#teacher">Teacher Form</a></li>
+            </ul>
+        </div>
+    </section>
+
+
 
     <input type="text" placeholder="First Name" pattern="\S+"><br>
     <input type="text" placeholder="Last Name" pattern="\S+"><br><br>
     <input type="email" placeholder="Email" pattern=".+@.+\.com"><br>
     <input type="password" placeholder="Password" pattern="\S+"><br><br>
-	
-	<p class=color>
-		Gender<br>
-		<label for="male">Male</label>
-		<input type="radio" name="gender" id="male" value="male"><br>
-		<label for="female">Female</label>
-		<input type="radio" name="gender" id="female" value="female"><br>
-	</p>
 
     <p>
-        <select>
-            <option selected="selected">Student</option>
-            <option>Teacher</option>
-        </select>
+        Gender<br>
+        <label for="male">Male</label>
+        <input type="radio" name="gender" id="male" value="male"><br>
+        <label for="female">Female</label>
+        <input type="radio" name="gender" id="female" value="female"><br>
     </p>
+
+    <div class="panel" id="student">
+        <p>
+            Grade<br>
+            <label for="male">Freshman</label>
+            <input type="radio" name="grade" id="freshman" value="freshman"><br>
+            <label for="male">Sophomore</label>
+            <input type="radio" name="grade" id="sophomore" value="sophomore"><br>
+            <label for="male">Junior</label>
+            <input type="radio" name="grade" id="junior" value="junior"><br>
+            <label for="male">Senior</label>
+            <input type="radio" name="grade" id="senior" value="senior"><br>
+        </p>
+    </div>
+
+    <div class="panel" id="teacher">
+        <input class="format" type="text" placeholder="Office Room #: (Optional)" pattern="."><br><br>
+    </div>
 
     <input type="submit" class="round">
 
+    <section></section>
+
+    <script>
+        function show(id) {
+            $('.tab')//Select all elements with tab class
+                    .removeClass('selected')//Remove the "selected" class
+                    .filter //Filter all tabs with function below
+                    (function () {
+                        return (this.hash === id);
+                    }) //Add the tag with the corresponding link
+                    .addClass('selected');
+
+            $('.panel')//Select elements with class "panel"
+                    .hide() //Hide all elements with class "panel"
+                    .filter(id) //Select the element with the filtered id
+                    .show(); //Unhide element that has been selected
+        }
+
+        //Calls the functions above when the # changes
+        $(window).on('hashchange', function(){
+            show(location.hash);
+        });
+
+        // Initially shows the first panel
+        show('#student');
+    </script>
 </form>
 </body>
 <footer>

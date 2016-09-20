@@ -4,8 +4,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-    <title>Login Page</title>
+    <title>About Us</title>
     <link rel="stylesheet" href="webStyles.css">
+    <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
 </head>
 
 <header>
@@ -21,11 +22,49 @@
 <h1>
     About Us
 </h1>
-
 <section>
-	Group Calendar is a project started by two aspiring programmers who needed to pass their SWE432 class.<br><br>
-	Current build: None
+    <div>
+        <ul class="tabs">
+            <li><a class ="tab" href="#general">General</a></li>
+            <li><a class ="tab" href="#build">Current Build</a></li>
+        </ul>
+    </div>
 </section>
+
+<div class="panel" id="general">
+    Group Calendar is a project started by two aspiring programmers who needed to pass their SWE432 class.
+</div>
+
+<div class="panel" id="build">
+    Current Build: None
+</div>
+
+<section></section>
+
+<script>
+    function show(id) {
+        $('.tab')//Select all elements with tab class
+                .removeClass('selected')//Remove the "selected" class
+                .filter //Filter all tabs with function below
+                (function () {
+                    return (this.hash === id);
+                }) //Add the tag with the corresponding link
+                .addClass('selected');
+
+        $('.panel')//Select elements with class "panel"
+                .hide() //Hide all elements with class "panel"
+                .filter(id) //Select the element with the filtered id
+                .show(); //Unhide element that has been selected
+    }
+
+    //Calls the functions above when the # changes
+    $(window).on('hashchange', function(){
+        show(location.hash);
+    });
+
+    // Initially shows the first panel
+    show('#general');
+</script>
 
 </body>
 <footer>

@@ -5,16 +5,16 @@ body {
 
     margin: 10px;
     padding: 5px;
+    padding-bottom: 50px;
     max-width: 2000px;
     max-height: 300px;
-
-
 }
 
 footer{
     position: fixed;
-    bottom:0;
+    bottom: 0;
 
+    z-index: 1;
     width: 98%;
     background-color: darkgray;
 }
@@ -72,8 +72,8 @@ input:valid{
     border: 3px solid green;
 }
 
-p.color{
-	color:black;
+p{
+    color:black;
 }
 
 section{
@@ -81,11 +81,12 @@ section{
 }
 
 table{
-
   border-collapse: collapse;
-  width: 500;
+  width: 500px;
   position: static;
+    padding-bottom: 20px;
 }
+
 th, td {
 	
     padding: 10px 50px 10px;
@@ -108,7 +109,6 @@ ul{
 
 @media screen and (max-width: 500px) {
     body {
-
         font-size:18pt;
     }
     p {

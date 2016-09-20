@@ -4,8 +4,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-    <title>Login Page</title>
+    <title>Login</title>
     <link rel="stylesheet" href="webStyles.css">
+    <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
 </head>
 
 <header>
@@ -23,16 +24,20 @@
 </h1>
 
 <input type="text" placeholder="Email" pattern=".+@.+\.com"><br>
-<input type="text" placeholder="Password" pattern=".+"><br>
+<input type="password" placeholder="Password" pattern=".+"><br>
 
 <p>
     <select>
-        <option selected="selected">Student</option>
-        <option>Teacher</option>
+        <ul class="tabs">
+            <option>Student</option>
+            <option>Teacher</option>
+        </ul>
     </select>
 </p>
 
 <input type="submit" class="round">
+
+<section></section>
 
 </body>
 <footer>
