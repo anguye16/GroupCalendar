@@ -1,0 +1,209 @@
+<!-- This is the landing/home page where users can read about the summary of Group Calendar -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="webStyles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+</head>
+
+<header>
+    <a href="index"> <img class="logo" src="grouplogo.png" alt="GroupCalendarLogo" height="200" width="200"></a>
+    <ul>
+        <li><a href="login">login</a></li>
+        <li><a href="signup">sign up</a></li>
+        <li><a href="about">about us</a></li>
+    </ul>
+</header>
+
+<body>
+
+<section>
+
+    Welcome to Group Calendar, a wonderful place to make new friends and find new groups as well as connect with people
+    you already know.<br><br>
+    Have a group, but not sure when everyone can meet? Want to find people in your area with similar
+    likes and interests as you? This might be the thing for you!
+    <img class =background src="grouplogo.png" alt="GroupCalendarLogo" height="200" width="200">
+
+</section>
+
+<button><a href="#" class="get_weather">Get weather</a></button>
+<div id="result" style="display: none">
+    <div id="icon"></div>
+    <div id="city"><strong></strong></div>
+    <div id="weather"></div>
+    <div id="rain"></div>
+    <div id="time"></div>
+    <button><a href="#" class="hide">Hide</a></button>
+</div>
+
+<section>
+    <div>
+        <ul class="tabs">
+            <li><a class ="tab" onclick="showDetails(this)" id="publicEvenTab" data-tab-desc="list of public events added by members" href="#publicevents">Public Events</a></li>
+            <li><a class ="tab" onclick="showDetails(this)" id="donTab" data-tab-desc="list of our most valuable donors" href="#donations">Donations</a></li>
+        </ul>
+    </div>
+</section>
+
+<div class="panel" id="publicevents" >
+    <div id="todoItems"></div>
+    <button id="new">New Event</button>
+</div>
+
+<div class="panel" id="donations">
+    <table style="height: 100px; overflow-y:scroll">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Amount Donated</th>
+        </tr>
+        <tr>
+            <td data-fName = "Bruce">Bruce</td>
+            <td>Wayne</td>
+            <td>$50,000</td>
+        </tr>
+        <tr>
+            <td data-fName = "Tony">Tony</td>
+            <td>Stark</td>
+            <td>$65,000</td>
+        </tr>
+        <tr>
+            <td data-fName = Lex>Lex</td>
+            <td>Luthor</td>
+            <td>$45,000</td>
+        </tr>
+        <tr>
+            <td data-fName = Black>Black</td>
+            <td>Panther</td>
+            <td>$100,000</td>
+        </tr>
+        <tr>
+            <td>Oliver</td>
+            <td>Queen</td>
+            <td>$10,000</td>
+        </tr>
+    </table>
+</div>
+
+<section></section>
+
+<script>
+    "use strict";
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
+        authDomain: "groupcalendar-82b96.firebaseapp.com",
+        databaseURL: "https://groupcalendar-82b96.firebaseio.com",
+        storageBucket: "groupcalendar-82b96.appspot.com",
+        messagingSenderId: "519544706410"
+    };
+    firebase.initializeApp(config);
+
+    function show(id) {
+        $('.tab')// Select all elements with tab class
+                .removeClass('selected')// Remove the "selected" class
+                .filter // Filter all tabs with function below
+                (function () {
+                    return (this.hash === id);
+                }) // Add the tag with the corresponding link
+                .addClass('selected');
+
+        $('.panel')// Select elements with class "panel"
+                .hide() // Hide all elements with class "panel"
+                .filter(id) // Select the element with the filtered id
+                .show(); // Unhide element that has been selected
+    }
+
+    // Calls the functions above when the # changes
+    $(window).on('hashchange', function(){
+        show(location.hash);
+    });
+
+    // Initially shows the first panel
+    show('#publicevents');
+
+    // Firebase scripts
+    var eventsRef = firebase.database().ref('events');
+
+    eventsRef.on('child_added', function(data){
+       createItem(data.val().text, data.key);
+    });
+
+    eventsRef.on('child_changed', function(data){
+        $('div[data-index="' + data.key + '"] input').val(data.val().text);
+    });
+
+    eventsRef.on('child_removed', function(data){
+        $('div[data-index="' + data.key + '"]').remove();
+    });
+
+    $('#new').click(function()
+    {
+        eventsRef.push({ 'text': ""});
+    });
+
+    function createItem(value, key)
+    {
+        $('#todoItems').append(
+                '<div class="todoItem" data-index="' + key + '"><input type="text" id="itemNew" onchange="itemChanged(this)" value="'
+                + value + '"><button onclick="deleteItem(this.parentElement)">&#x2716;</button></div>'
+        );
+    }
+
+    function deleteItem(inputDiv)
+    {
+        eventsRef.child(inputDiv.dataset.index).remove();
+    }
+
+    function itemChanged(inputElem)
+    {
+        var index = inputElem.parentElement.dataset.index;
+        eventsRef.child(index).set({ 'text': inputElem.value });
+    }
+
+
+
+    //weather script
+    jQuery(function($){
+        function getWeather(){
+            $.ajax('http://api.wunderground.com/api/42fac7a19d94e096/conditions/q/VA/fairfax.json', {
+                dataType: 'json',
+                success: function(json) {
+                    $('div#city strong').text(json.current_observation.display_location.full)
+                    $('div#icon').html('<img src=' + json.current_observation.icon_url + '>')
+                    $('div#rain').text("Rain last hour " + json.current_observation.precip_1hr_in);
+                    $('div#weather').text(json.current_observation.temperature_string + " " + json.current_observation.weather);
+                    $('div#time').text(json.current_observation.observation_time_rfc822);
+                }
+            });
+        }
+        $('a.get_weather').click(function(e) {
+            e.preventDefault();
+            $(this).hide();
+            getWeather();
+            $('#result').fadeIn(500);
+        });
+        $('a.hide').click(function(e) {
+            e.preventDefault();
+            $('#result').hide();
+            $('a.get_weather').show();
+        })
+    })
+
+
+</script>
+
+</body>
+
+<footer>
+	<ul>
+		<li><a href="about">about us</a></li>
+	</ul>
+</footer>
+
+</html>

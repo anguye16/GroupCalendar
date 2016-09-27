@@ -1,0 +1,86 @@
+<!-- This page will give users some background information on the project -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <title>About Us</title>
+    <link rel="stylesheet" href="webStyles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+</head>
+
+<header>
+    <a href="index"> <img class="logo" src="grouplogo.png" alt="GroupCalendarLogo" height="200" width="200"></a>
+    <ul>
+        <li><a href="login">login</a></li>
+        <li><a href="signup">sign up</a></li>
+        <li><a href="about">about us</a></li>
+    </ul>
+</header>
+
+<body>
+<h1>
+    About Us
+</h1>
+<section>
+    <div>
+        <ul class="tabs">
+            <li><a class ="tab" href="#general">General</a></li>
+            <li><a class ="tab" href="#build">Current Build</a></li>
+        </ul>
+    </div>
+</section>
+
+<div class="panel" id="general">
+    Group Calendar is a project started by two aspiring programmers who needed to pass their SWE432 class.
+</div>
+
+<div class="panel" id="build">
+    Current Build: None
+</div>
+
+<section></section>
+
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
+        authDomain: "groupcalendar-82b96.firebaseapp.com",
+        databaseURL: "https://groupcalendar-82b96.firebaseio.com",
+        storageBucket: "groupcalendar-82b96.appspot.com",
+        messagingSenderId: "519544706410"
+    };
+    firebase.initializeApp(config);
+
+    function show(id) {
+        $('.tab')//Select all elements with tab class
+                .removeClass('selected')//Remove the "selected" class
+                .filter //Filter all tabs with function below
+                (function () {
+                    return (this.hash === id);
+                }) //Add the tag with the corresponding link
+                .addClass('selected');
+
+        $('.panel')//Select elements with class "panel"
+                .hide() //Hide all elements with class "panel"
+                .filter(id) //Select the element with the filtered id
+                .show(); //Unhide element that has been selected
+    }
+
+    //Calls the functions above when the # changes
+    $(window).on('hashchange', function(){
+        show(location.hash);
+    });
+
+    // Initially shows the first panel
+    show('#general');
+</script>
+
+</body>
+<footer>
+	<ul>
+		<li><a href="about">about us</a></li>
+	</ul>
+</footer>
+</html>
