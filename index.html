@@ -171,7 +171,7 @@
     //weather script
     jQuery(function($){
         function getWeather(){
-            $.ajax('http://api.wunderground.com/api/42fac7a19d94e096/conditions/q/VA/fairfax.json', {
+            $.ajax('https://api.wunderground.com/api/42fac7a19d94e096/conditions/q/VA/fairfax.json', {
                 dataType: 'json',
                 success: function(json) {
                     $('div#city strong').text(json.current_observation.display_location.full)
