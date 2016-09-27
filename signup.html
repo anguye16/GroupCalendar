@@ -6,7 +6,9 @@
 	<meta charset="UTF-8">
     <title>Sign Up</title>
     <link rel="stylesheet" href="webStyles.css">
-    <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 </head>
 
 <header>
@@ -34,10 +36,10 @@
 
 
 
-    <input type="text" placeholder="First Name" pattern="\S+"><br>
-    <input type="text" placeholder="Last Name" pattern="\S+"><br><br>
-    <input type="email" placeholder="Email" pattern=".+@.+\.com"><br>
-    <input type="password" placeholder="Password" pattern="\S+"><br><br>
+    <input type="text" name="firstName" placeholder="First Name" pattern="\S+"><br>
+    <input type="text" name="lastName" placeholder="Last Name" pattern="\S+"><br><br>
+    <input type="email" name="email" placeholder="Email" pattern=".+@.+\.com"><br>
+    <input type="password" name="password" placeholder="Password" pattern="\S+"><br><br>
 
     <p>
         Gender<br>
@@ -62,36 +64,65 @@
     </div>
 
     <div class="panel" id="teacher">
-        <input class="format" type="text" placeholder="Office Room #: (Optional)" pattern="."><br><br>
+        <input class="format" name="office" type="text" placeholder="Office Room #: (Optional)" pattern=".*"><br><br>
     </div>
 
-    <input type="submit" class="round">
+    <a href="login"><button id="submitButton" class="round">Submit</button></a>
 
     <section></section>
 
     <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
+            authDomain: "groupcalendar-82b96.firebaseapp.com",
+            databaseURL: "https://groupcalendar-82b96.firebaseio.com",
+            storageBucket: "groupcalendar-82b96.appspot.com",
+            messagingSenderId: "519544706410"
+        };
+        firebase.initializeApp(config);
+
         function show(id) {
-            $('.tab')//Select all elements with tab class
-                    .removeClass('selected')//Remove the "selected" class
-                    .filter //Filter all tabs with function below
+            $('.tab')// Select all elements with tab class
+                    .removeClass('selected')// Remove the "selected" class
+                    .filter // Filter all tabs with function below
                     (function () {
                         return (this.hash === id);
-                    }) //Add the tag with the corresponding link
+                    }) // Add the tag with the corresponding link
                     .addClass('selected');
 
-            $('.panel')//Select elements with class "panel"
-                    .hide() //Hide all elements with class "panel"
-                    .filter(id) //Select the element with the filtered id
-                    .show(); //Unhide element that has been selected
+            $('.panel')// Select elements with class "panel"
+                    .hide() // Hide all elements with class "panel"
+                    .filter(id) // Select the element with the filtered id
+                    .show(); // Unhide element that has been selected
         }
 
-        //Calls the functions above when the # changes
+        // Calls the functions above when the # changes
         $(window).on('hashchange', function(){
             show(location.hash);
         });
 
         // Initially shows the first panel
         show('#student');
+
+        // Firebase scripts
+        var accountRef = firebase.database().ref('accounts');
+
+        // Takes information from these fields and pushes it to Firebase
+        $('#submitButton').click(function()
+        {
+            accountRef.push({
+                "First Name": $('[name=firstName]').val(),
+                "Last Name": $('[name=lastName]').val(),
+                "Email": $('[name=email]').val(),
+                "Password": $('[name=password]').val(),
+                "Gender": $('[name=gender]').val(),
+                "Grade": $('[name=grade]').val(),
+                "Office": $('[name=office]').val()
+            });
+            alert("Your account has been successfully created.");
+        });
+
     </script>
 </form>
 </body>

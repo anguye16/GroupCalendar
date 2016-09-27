@@ -6,7 +6,8 @@
     <meta charset="UTF-8">
     <title>Welcome</title>
     <link rel="stylesheet" href="webStyles.css">
-    <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 </head>
 
 <header>
@@ -30,6 +31,16 @@
 
 </section>
 
+<button><a href="#" class="get_weather">Get weather</a></button>
+<div id="result" style="display: none">
+    <div id="icon"></div>
+    <div id="city"><strong></strong></div>
+    <div id="weather"></div>
+    <div id="rain"></div>
+    <div id="time"></div>
+    <button><a href="#" class="hide">Hide</a></button>
+</div>
+
 <section>
     <div>
         <ul class="tabs">
@@ -40,8 +51,8 @@
 </section>
 
 <div class="panel" id="publicevents" >
-    <div id=todoItems></div>
-    <button id="new">New item</button>
+    <div id="todoItems"></div>
+    <button id="new">New Event</button>
 </div>
 
 <div class="panel" id="donations">
@@ -82,22 +93,33 @@
 <section></section>
 
 <script>
+    "use strict";
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
+        authDomain: "groupcalendar-82b96.firebaseapp.com",
+        databaseURL: "https://groupcalendar-82b96.firebaseio.com",
+        storageBucket: "groupcalendar-82b96.appspot.com",
+        messagingSenderId: "519544706410"
+    };
+    firebase.initializeApp(config);
+
     function show(id) {
-        $('.tab')//Select all elements with tab class
-                .removeClass('selected')//Remove the "selected" class
-                .filter //Filter all tabs with function below
+        $('.tab')// Select all elements with tab class
+                .removeClass('selected')// Remove the "selected" class
+                .filter // Filter all tabs with function below
                 (function () {
                     return (this.hash === id);
-                }) //Add the tag with the corresponding link
+                }) // Add the tag with the corresponding link
                 .addClass('selected');
 
-        $('.panel')//Select elements with class "panel"
-                .hide() //Hide all elements with class "panel"
-                .filter(id) //Select the element with the filtered id
-                .show(); //Unhide element that has been selected
+        $('.panel')// Select elements with class "panel"
+                .hide() // Hide all elements with class "panel"
+                .filter(id) // Select the element with the filtered id
+                .show(); // Unhide element that has been selected
     }
 
-    //Calls the functions above when the # changes
+    // Calls the functions above when the # changes
     $(window).on('hashchange', function(){
         show(location.hash);
     });
@@ -105,37 +127,74 @@
     // Initially shows the first panel
     show('#publicevents');
 
-    var eventItems = [];
+    // Firebase scripts
+    var eventsRef = firebase.database().ref('events');
+
+    eventsRef.on('child_added', function(data){
+       createItem(data.val().text, data.key);
+    });
+
+    eventsRef.on('child_changed', function(data){
+        $('div[data-index="' + data.key + '"] input').val(data.val().text);
+    });
+
+    eventsRef.on('child_removed', function(data){
+        $('div[data-index="' + data.key + '"]').remove();
+    });
 
     $('#new').click(function()
     {
-        $('#todoItems').append(
-                '<div class="todoItem"><input type="text" id="itemNew"/><button onclick="deleteItem(this.parentElement)"> &#x2716;</button>' +
-                '<button onclick="submitEvent(this.parentElement)">Submit Item </button></div>'
-        );
+        eventsRef.push({ 'text': ""});
     });
-    function deleteItem(divElem){
-        divElem.parentElement.removeChild(divElem);
-    }
-    function submitEvent(divElem){
-        var eventItem = "<ul><li>" + $("#itemNew").val() + "</li></ul>";
-        divElem.parentElement.removeChild(divElem);
 
-        eventItems.push(eventItem);
-
-        $('#todoItems').html(eventItems.join("<br>"));
-    }
-    $('button').click(function()
+    function createItem(value, key)
     {
-        console.log(JSON.stringify(this));
-        this.parent().remove(this);
-    });
-
-
-    function showDetails(tab) {
-        var tabDetails = tab.getAttribute("data-tab-desc");
-        console.log("The " + tab.innerHTML + " is a " + tabDetails + ".");
+        $('#todoItems').append(
+                '<div class="todoItem" data-index="' + key + '"><input type="text" id="itemNew" onchange="itemChanged(this)" value="'
+                + value + '"><button onclick="deleteItem(this.parentElement)">&#x2716;</button></div>'
+        );
     }
+
+    function deleteItem(inputDiv)
+    {
+        eventsRef.child(inputDiv.dataset.index).remove();
+    }
+
+    function itemChanged(inputElem)
+    {
+        var index = inputElem.parentElement.dataset.index;
+        eventsRef.child(index).set({ 'text': inputElem.value });
+    }
+
+
+
+    //weather script
+    jQuery(function($){
+        function getWeather(){
+            $.ajax('http://api.wunderground.com/api/42fac7a19d94e096/conditions/q/VA/fairfax.json', {
+                dataType: 'json',
+                success: function(json) {
+                    $('div#city strong').text(json.current_observation.display_location.full)
+                    $('div#icon').html('<img src=' + json.current_observation.icon_url + '>')
+                    $('div#rain').text("Rain last hour " + json.current_observation.precip_1hr_in);
+                    $('div#weather').text(json.current_observation.temperature_string + " " + json.current_observation.weather);
+                    $('div#time').text(json.current_observation.observation_time_rfc822);
+                }
+            });
+        }
+        $('a.get_weather').click(function(e) {
+            e.preventDefault();
+            $(this).hide();
+            getWeather();
+            $('#result').fadeIn(500);
+        });
+        $('a.hide').click(function(e) {
+            e.preventDefault();
+            $('#result').hide();
+            $('a.get_weather').show();
+        })
+    })
+
 
 </script>
 

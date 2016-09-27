@@ -6,7 +6,8 @@
 	<meta charset="UTF-8">
     <title>About Us</title>
     <link rel="stylesheet" href="webStyles.css">
-    <script src="http://code.jquery.com/jquery-2.0.0.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 </head>
 
 <header>
@@ -42,6 +43,16 @@
 <section></section>
 
 <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
+        authDomain: "groupcalendar-82b96.firebaseapp.com",
+        databaseURL: "https://groupcalendar-82b96.firebaseio.com",
+        storageBucket: "groupcalendar-82b96.appspot.com",
+        messagingSenderId: "519544706410"
+    };
+    firebase.initializeApp(config);
+
     function show(id) {
         $('.tab')//Select all elements with tab class
                 .removeClass('selected')//Remove the "selected" class
