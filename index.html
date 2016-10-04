@@ -7,7 +7,11 @@
     <title>Welcome</title>
     <link rel="stylesheet" href="webStyles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://fb.me/react-15.0.0.js"></script>
+    <script src="https://fb.me/react-dom-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
 </head>
 
 <header>
@@ -31,14 +35,8 @@
 
 </section>
 
-<button><a href="#" class="get_weather">Get weather</a></button>
-<div id="result" style="display: none">
-    <div id="icon"></div>
-    <div id="city"><strong></strong></div>
-    <div id="weather"></div>
-    <div id="rain"></div>
-    <div id="time"></div>
-    <button><a href="#" class="hide">Hide</a></button>
+<div id="containerWeather">
+    <!-- This element's contents will be replaced with your component. -->
 </div>
 
 <section>
@@ -51,8 +49,9 @@
 </section>
 
 <div class="panel" id="publicevents" >
-    <div id="todoItems"></div>
-    <button id="new">New Event</button>
+    <div id="container">
+
+    </div>
 </div>
 
 <div class="panel" id="donations">
@@ -92,7 +91,7 @@
 
 <section></section>
 
-<script>
+<script type="text/babel">
     "use strict";
     // Initialize Firebase
     var config = {
@@ -127,74 +126,99 @@
     // Initially shows the first panel
     show('#publicevents');
 
-    // Firebase scripts
-    var eventsRef = firebase.database().ref('events');
+    //React scripts
+    var TodoList = React.createClass({
+        render: function () {
+            var eventsRef = firebase.database().ref('events');
+            var _this = this; //In the subcomponent, "this" will refer to window, so need to save "this" here
+            var createItem = function (item, key) {
+                return (<div key={key}><input type="text" placeholder="Event name" onChange={_this.props.onChange.bind(null, item['.key'])}
+                                              value={item.text}/>
+                    <button onClick={_this.props.removeItem.bind(null, item['.key'])}>&#x2716;</button>
+                </div>);
+            };
+            return <ul>{this.props.items.map(createItem)}</ul>;
+        }
+    });
+    var TodoApp = React.createClass({
+        mixins: [ReactFireMixin],
+        getInitialState: function () {
+            return {items: []};
+        },
+        componentWillMount: function () {
+            this.fireRef = firebase.database().ref('events');
 
-    eventsRef.on('child_added', function(data){
-       createItem(data.val().text, data.key);
+            this.bindAsArray(this.fireRef, "items");
+        },
+        onChange: function (fireKey, event) {
+            this.fireRef.child(fireKey).set({"text": event.target.value});
+        },
+        removeItem: function (key) {
+            this.fireRef.child(key).remove();
+        },
+
+        handleAdd: function (e) {
+            this.fireRef.push({"text": ""});
+        },
+        render: function () {
+            return (
+                    <div>
+                        <h3>Events</h3>
+                        <TodoList items={this.state.items} removeItem={this.removeItem} onChange={this.onChange}/>
+                        <button onClick={this.handleAdd}>New</button>
+                    </div>
+            );
+        }
     });
 
-    eventsRef.on('child_changed', function(data){
-        $('div[data-index="' + data.key + '"] input').val(data.val().text);
-    });
-
-    eventsRef.on('child_removed', function(data){
-        $('div[data-index="' + data.key + '"]').remove();
-    });
-
-    $('#new').click(function()
-    {
-        eventsRef.push({ 'text': ""});
-    });
-
-    function createItem(value, key)
-    {
-        $('#todoItems').append(
-                '<div class="todoItem" data-index="' + key + '"><input type="text" id="itemNew" onchange="itemChanged(this)" value="'
-                + value + '"><button onclick="deleteItem(this.parentElement)">&#x2716;</button></div>'
-        );
-    }
-
-    function deleteItem(inputDiv)
-    {
-        eventsRef.child(inputDiv.dataset.index).remove();
-    }
-
-    function itemChanged(inputElem)
-    {
-        var index = inputElem.parentElement.dataset.index;
-        eventsRef.child(index).set({ 'text': inputElem.value });
-    }
-
-
+    ReactDOM.render(<TodoApp><span/></TodoApp>, document.getElementById('container'));
 
     //weather script
-    jQuery(function($){
-        function getWeather(){
-            $.ajax('https://api.wunderground.com/api/42fac7a19d94e096/conditions/q/VA/fairfax.json', {
-                dataType: 'json',
-                success: function(json) {
-                    $('div#city strong').text(json.current_observation.display_location.full)
-                    $('div#icon').html('<img src=' + json.current_observation.icon_url + '>')
-                    $('div#rain').text("Rain last hour " + json.current_observation.precip_1hr_in);
-                    $('div#weather').text(json.current_observation.temperature_string + " " + json.current_observation.weather);
-                    $('div#time').text(json.current_observation.observation_time_rfc822);
-                }
-            });
-        }
-        $('a.get_weather').click(function(e) {
-            e.preventDefault();
-            $(this).hide();
-            getWeather();
-            $('#result').fadeIn(500);
-        });
-        $('a.hide').click(function(e) {
-            e.preventDefault();
-            $('#result').hide();
-            $('a.get_weather').show();
-        })
-    })
 
+    var Weather = React.createClass({
+        getInitialState: function() {
+            return { showResults: false };
+        },
+
+        componentDidMount: function() {
+            $.ajax('https://api.wunderground.com/api/42fac7a19d94e096/conditions/q/VA/fairfax.json',{
+                url: this.props.url,
+                dataType: 'json',
+                cache: false,
+                success: function(json) {
+
+                    this.setState(
+                            {city : json.current_observation.display_location.full,
+                                icon:'<img src=' + json.current_observation.icon_url + '>',
+                                rain: "Rain last hour " + json.current_observation.precip_1hr_in,
+                                weather:json.current_observation.temperature_string + " " + json.current_observation.weather,
+                                time:json.current_observation.observation_time_rfc822
+                            });
+                    console.log(this.state.time);
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        },
+
+        componentWillUnmount: function() {
+            this.serverRequest.abort();
+        },
+
+        render: function() {
+            return (
+                    <div>
+                        <div>{this.state.city}</div>
+                        <div>{this.state.rain}</div>
+                        <div>{this.state.weather}</div>
+                        <div>{this.state.time}</div>
+                    </div>
+            );
+        }
+    });
+
+    ReactDOM.render( <Weather><h1></h1></Weather>, document.getElementById('containerWeather'));
 
 </script>
 
