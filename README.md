@@ -1,7 +1,7 @@
 # GroupCalendar
 SWE432 Project
 
-HW4 Scenarios:
+HW5 Scenarios:
 
 Registration and Login
 Users can create an account using an email address and password. After checking firebase for a unique email address, registration is successful and the user can log in using their credentials.
@@ -21,6 +21,11 @@ Registration and Login
 
 View Weather- reimplemented with React
 
-View events - implemented with React and Firebase
+Schedule events - implemented with React and Firebase
+
+View Events- Users can view all public events in their area with the d3js collabsable indented tree feature on the index page.
+
+
+
 
 

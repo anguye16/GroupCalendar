@@ -3,11 +3,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="webStyles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://fb.me/react-15.0.0.js"></script>
+    <script src="https://fb.me/react-dom-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 
 <header>
@@ -24,28 +29,13 @@
     Login
 </h1>
 
-<input type="text" name="email" placeholder="Email" pattern=".+@.+\.com"><br>
-<input type="password" name="password" placeholder="Password" pattern=".+"><br>
-
-<p>
-    <select>
-        <ul class="tabs">
-            <option>Student</option>
-            <option>Teacher</option>
-        </ul>
-    </select>
-</p>
-
-<button id="submitButton" class="round">Submit</button>
-
-<p id="incorrect" style="color:red">Incorrect email/password credentials.</p>
-<p id="correct" style="color:green">You are now logged in.</p>
-
+<div id="content"></div>
 <section></section>
 
-<script>
-    $('#incorrect').hide();
-    $('#correct').hide();
+
+</body>
+<script type="text/babel">
+    "use strict";
 
     // Initialize Firebase
     var config = {
@@ -57,36 +47,45 @@
     };
     firebase.initializeApp(config);
 
-    // Firebase scripts
-    var accountRef = firebase.database().ref('accounts');
 
 
-    $('#submitButton').click(function() {
-        accountRef.orderByChild("Email").on("child_added", function(snapshot){ // Searches through all emails
-            if(snapshot.val().Email == $('[name=email]').val()){ // Email is matched
-                accountRef.orderByChild("Password").on("child_added", function(snapshot){ // Searches through all passwords
-                    if(snapshot.val().Password == $('[name=password]').val()){ // Password is found WITH correct Email
-                        $('#incorrect').hide();
-                        $('#correct').show();
-                    }
-                    else{
-                        $('#correct').hide();
-                        $('#incorrect').show();
-                    }
-                });
-            }
-            else{
-                $('#correct').hide();
-                $('#incorrect').show();
-            }
-        });
+    var loginForm = React.createClass({
+        getInitialState: function() {
+            return {author: '', text: ''};
+        },
+        handleTextChange: function(e) {
+            this.setState({text: e.target.value});
+        },
+        handleSubmit: function(e) {
+
+        },
+        render: function() {
+            return (
+                <form className="commentForm" onSubmit={this.handleSubmit}>
+                    <input type="text" placeholder="username" value={this.state.user}/>
+                    <input type="password" placeholder="password" value={this.state.password}/>
+
+                    <p>
+                        <select>
+                            <ul class="tabs">
+                                <option>Student</option>
+                                <option>Teacher</option>
+                            </ul>
+                        </select>
+                    </p>
+
+
+                    <input type="submit" value="Post"/>
+                </form>
+            );
+        }
     });
 
+    ReactDOM.render(<loginForm></loginForm>, document.getElementById('content'));
 
 </script>
 
 
-</body>
 <footer>
 	<ul>
 		<li><a href="about">about us</a></li>
