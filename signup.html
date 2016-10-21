@@ -1,13 +1,23 @@
-<!-- This page will allow users to login and view other pages that are locked behind a login wall -->
+<!-- This page allows users to sign up for our website to view certain things that are not normally seen to the public eye -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="webStyles.css">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://fb.me/react-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-with-addons.js"></script>
+    <script src="https://fb.me/react-dom-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
+    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine.js"></script>
+    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine-html.js"></script>
+    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/boot.js"></script>
+    <link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.5.2/jasmine.css">
 </head>
 
 <header>
@@ -20,66 +30,133 @@
 </header>
 
 <body>
-<h1>
-    Login
-</h1>
+<form>
+    <h1>
+        Sign Up
+    </h1>
+    <section>
+        <div>
+            <ul class="tabs">
+                <li><a class ="tab" href="#student">Student Form</a></li>
+                <li><a class ="tab" href="#teacher">Teacher Form</a></li>
+            </ul>
+        </div>
+    </section>
 
-<input type="text" name="email" placeholder="Email" pattern=".+@.+\.com"><br>
-<input type="password" name="password" placeholder="Password" pattern=".+"><br>
 
-<p>
-    <select>
-        <ul class="tabs">
-            <option>Student</option>
-            <option>Teacher</option>
-        </ul>
-    </select>
-</p>
 
-<button id="submitButton" class="round">Submit</button>
+    <input type="text" id="firstName" name="firstName" placeholder="First Name" pattern="\S+"><br>
+    <input type="text" id="lastName" name="lastName" placeholder="Last Name" pattern="\S+"><br><br>
+    <input type="email" id="email" name="email" placeholder="Email" pattern=".+@.+\.com"><br>
+    <input type="password" id="password" name="password" placeholder="Password" pattern="\S+"><br><br>
 
-<p id="incorrect" style="color:red">Incorrect email/password credentials.</p>
-<p id="correct" style="color:green">You are now logged in.</p>
+    <p>
+        Gender<br>
+        <label for="male">Male</label>
+        <input type="radio" name="gender" id="male" value="male"><br>
+        <label for="female">Female</label>
+        <input type="radio" name="gender" id="female" value="female"><br>
+    </p>
 
-<section></section>
+    <div class="panel" id="student">
+        <p>
+            Grade<br>
+            <label for="male">Freshman</label>
+            <input type="radio" name="grade" id="freshman" value="freshman"><br>
+            <label for="male">Sophomore</label>
+            <input type="radio" name="grade" id="sophomore" value="sophomore"><br>
+            <label for="male">Junior</label>
+            <input type="radio" name="grade" id="junior" value="junior"><br>
+            <label for="male">Senior</label>
+            <input type="radio" name="grade" id="senior" value="senior"><br>
+        </p>
+    </div>
 
-<script>
-    $('#incorrect').hide();
-    $('#correct').hide();
-    // Initialize Firebase
-    var config = {
-        apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
-        authDomain: "groupcalendar-82b96.firebaseapp.com",
-        databaseURL: "https://groupcalendar-82b96.firebaseio.com",
-        storageBucket: "groupcalendar-82b96.appspot.com",
-        messagingSenderId: "519544706410"
-    };
-    firebase.initializeApp(config);
-    // Firebase scripts
-    var accountRef = firebase.database().ref('accounts');
-    $('#submitButton').click(function() {
-        accountRef.orderByChild("Email").on("child_added", function(snapshot){ // Searches through all emails
-            if(snapshot.val().Email == $('[name=email]').val()){ // Email is matched
-                accountRef.orderByChild("Password").on("child_added", function(snapshot){ // Searches through all passwords
-                    if(snapshot.val().Password == $('[name=password]').val()){ // Password is found WITH correct Email
-                        $('#incorrect').hide();
-                        $('#correct').show();
-                    }
-                    else{
-                        $('#correct').hide();
-                        $('#incorrect').show();
-                    }
-                });
-            }
-            else{
-                $('#correct').hide();
-                $('#incorrect').show();
-            }
+    <div class="panel" id="teacher">
+        <input class="format" name="office" type="text" placeholder="Office Room #: (Optional)" pattern=".*"><br><br>
+    </div>
+
+    <a href="login"><button id="submitButton" class="round">Submit</button></a>
+
+    <section></section>
+
+    <script type="text/babel">
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
+            authDomain: "groupcalendar-82b96.firebaseapp.com",
+            databaseURL: "https://groupcalendar-82b96.firebaseio.com",
+            storageBucket: "groupcalendar-82b96.appspot.com",
+            messagingSenderId: "519544706410"
+        };
+        firebase.initializeApp(config);
+
+        function show(id) {
+            $('.tab')// Select all elements with tab class
+                .removeClass('selected')// Remove the "selected" class
+                .filter // Filter all tabs with function below
+                (function () {
+                    return (this.hash === id);
+                }) // Add the tag with the corresponding link
+                .addClass('selected');
+
+            $('.panel')// Select elements with class "panel"
+                .hide() // Hide all elements with class "panel"
+                .filter(id) // Select the element with the filtered id
+                .show(); // Unhide element that has been selected
+        }
+
+        // Calls the functions above when the # changes
+        $(window).on('hashchange', function(){
+            show(location.hash);
         });
-    });
-</script>
 
+        // Initially shows the first panel
+        show('#student');
 
+        // Firebase scripts
+        var accountRef = firebase.database().ref('accounts');
+
+        // Takes information from these fields and pushes it to Firebase
+        $('#submitButton').click(function()
+        {
+            accountRef.push({
+                "First Name": $('[name=firstName]').val(),
+                "Last Name": $('[name=lastName]').val(),
+                "Email": $('[name=email]').val(),
+                "Password": $('[name=password]').val(),
+                "Gender": $('[name=gender]').val(),
+                "Grade": $('[name=grade]').val(),
+                "Office": $('[name=office]').val()
+            });
+            alert("Your account has been successfully created.");
+        });
+
+        describe("signup", function(){
+            var TestUtils = React.addons.TestUtils;
+            var firstName, lastName, email, password, gender, grade;
+            var signupComp;
+
+            beforeEach(function(){
+                document.getElementsByName("firstName").value = 'Mister';
+                document.getElementsByName("lastName").value = 'Tester';
+                document.getElementsByName("email").value = 'misterTester@site.com';
+                document.getElementsByName("password").value = 'lemon';
+                document.getElementsByName("gender").value = 'male';
+                document.getElementsByName("grade").value = 'senior';
+                signupComp = TestUtils.renderIntoDocument(element);
+
+                spyOn(signupComp.ref.child('accounts'),"push");
+            });
+            it("Pushed into Firebase", function(){
+                let submitButton = TestUtils.findRenderedDOMComponentWithTag(signupComp,"submitButton");
+                TestUtils.Simulate.click(submitButton);
+                expect(loginComponent.ref.push).toHaveBeenCalled();
+            });
+        });
+
+    </script>
+</form>
 </body>
 <footer>
     <ul>
