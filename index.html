@@ -13,18 +13,6 @@
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
     <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
     <script src="https://d3js.org/d3.v3.min.js"></script>
-
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-with-addons.js"></script>
-    <script src="https://fb.me/react-dom-15.0.0.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
-
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine-html.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/boot.js"></script>
-    <link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.5.2/jasmine.css">
 </head>
 
 <header>
@@ -436,75 +424,6 @@
     function color(d) {
         return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
     }
-
-    describe('Events', function () {
-        var TestUtils = React.addons.TestUtils;
-        var EventsComponent, element, renderedDOM;
-        beforeEach(function (done) {
-            element = React.createElement(Events);
-            EventsComponent = TestUtils.renderIntoDocument(element);
-            EventsComponent.setState({items: [{text: "testItem",date: "10/13/16" }]}, done);
-        });
-        it("Has a new button", function () {
-            let buttons = TestUtils.scryRenderedDOMComponentsWithTag(EventsComponent, "button");
-            /*
-             Warning: Anti-pattern: should *not* have this hard-coded index into the button array
-             Better: Add an ID to that button, and then find it
-             Same applies everywhere else below that we use the same anti-pattern
-             */
-            expect(buttons[1]).not.toBeUndefined();
-            expect(buttons[1].innerHTML).toBe("New");
-        });
-        it("Has a events component", function () {
-            expect(function () {
-                TestUtils.findRenderedComponentWithType(EventsComponent, EventList);
-            }).not.toThrow();
-        });
-    });
-
-
-    describe("EventList", function () {
-        var EventListComponent;
-        var TestUtils = React.addons.TestUtils;
-        var fireRef = firebase.database().ref('events');
-        beforeEach(function () {
-            EventListComponent = TestUtils.findRenderedComponentWithType(EventListComponent, Event);
-        });
-        it("Updates firebase when text is changed", function () {
-            var setSpy;
-            setSpy = jasmine.createSpy("set");
-            spyOn(EventListComponent.fireRef, "child").and.returnValue({set: setSpy});
-            var inputs = TestUtils.scryRenderedDOMComponentsWithTag(EventListComponent, "input");
-            inputs[0].value = "asdf";
-            TestUtils.Simulate.change(inputs[0]);
-            expect(todoAppComponent.fireRef.child).toHaveBeenCalled();
-            expect(setSpy).toHaveBeenCalledWith({text: "asdf"});
-        });
-
-    });
-
-
-        describe("Weather", function () {
-            var TestUtils = React.addons.TestUtils;
-            var weatherComponent, element;
-            var city;
-            beforeEach(function () {
-                element = React.createElement(Weather);
-                weatherComponent = TestUtils.renderIntoDocument(element);
-                city = "Fairfax, VA";
-            });
-            it("Has the correct city value from ajax call", function () {
-                //let city = TestUtils.findRenderedDOMComponentWithClass(weatherComponent,"jsonCall")
-                expect(city).toBe("Fairfax, VA");
-                console.log(city);
-            });
-        });
-
-
-
-
-
-
 
 </script>
 

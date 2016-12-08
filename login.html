@@ -12,10 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
     <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine-html.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/boot.js"></script>
-    <link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.5.2/jasmine.css">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 </head>
 
 <header>
@@ -32,28 +29,14 @@
     Login
 </h1>
 
-<input type="text" id="email" name="email" placeholder="Email" pattern=".+@.+\.com"><br>
-<input type="password" id="password" name="password" placeholder="Password" pattern=".+"><br>
-
-<p>
-    <select>
-        <ul class="tabs">
-            <option>Student</option>
-            <option>Teacher</option>
-        </ul>
-    </select>
-</p>
-
-<button id="submitButton" class="round">Submit</button>
-
-<p id="incorrect" style="color:red">Incorrect email/password credentials.</p>
-<p id="correct" style="color:green">You are now logged in.</p>
-
+<div id="content"></div>
 <section></section>
 
+
+</body>
 <script type="text/babel">
-    $('#incorrect').hide();
-    $('#correct').hide();
+    "use strict";
+
     // Initialize Firebase
     var config = {
         apiKey: "AIzaSyC-qT42afFTH5hPZ_v9wvbrV0sLEggRjHc",
@@ -63,65 +46,49 @@
         messagingSenderId: "519544706410"
     };
     firebase.initializeApp(config);
-    // Firebase scripts
-    var accountRef = firebase.database().ref('accounts');
-    var loginChecker = false;
-    $('#submitButton').click(function() {
-        accountRef.orderByChild("Email").on("child_added", function(snapshot){ // Searches through all emails
-            if(snapshot.val().Email == $('[name=email]').val()){ // Email is matched
-                accountRef.orderByChild("Password").on("child_added", function(snapshot){ // Searches through all passwords
-                    if(snapshot.val().Password == $('[name=password]').val()){ // Password is found WITH correct Email
-                        $('#incorrect').hide();
-                        $('#correct').show();
-                        loginChecker = true;
-                        console.log("Inside of correct");
-                    }
-                    else{
-                        $('#correct').hide();
-                        $('#incorrect').show();
-                        loginChecker = false;
-                    }
-                });
-            }
-            else{
-                $('#correct').hide();
-                $('#incorrect').show();
-                loginChecker = false;
-            }
-        });
+
+
+
+    var loginForm = React.createClass({
+        getInitialState: function() {
+            return {author: '', text: ''};
+        },
+        handleTextChange: function(e) {
+            this.setState({text: e.target.value});
+        },
+        handleSubmit: function(e) {
+
+        },
+        render: function() {
+            return (
+                <form className="commentForm" onSubmit={this.handleSubmit}>
+                    <input type="text" placeholder="username" value={this.state.user}/>
+                    <input type="password" placeholder="password" value={this.state.password}/>
+
+                    <p>
+                        <select>
+                            <ul class="tabs">
+                                <option>Student</option>
+                                <option>Teacher</option>
+                            </ul>
+                        </select>
+                    </p>
+
+
+                    <input type="submit" value="Post"/>
+                </form>
+            );
+        }
     });
 
-    describe("login", function(){
-        var spyEvent;
-        beforeEach(function(){
-            document.getElementById("email").value = 'test@site.com';
-            document.getElementById("password").value = 'lemon';
-            loginChecker = true;
-        });
-        it("Has correct login credentials", function(){
-            document.getElementById("submitButton").click();
-            expect(loginChecker).toBe(true);
-        });
-    });
+    ReactDOM.render(<loginForm></loginForm>, document.getElementById('content'));
 
-    describe("login", function(){
-        beforeEach(function(){
-            document.getElementById("email").value = 'test@site.com';
-            document.getElementById("password").value = 'lemonzzzz';
-            loginChecker = false;
-        });
-        it("Has incorrect login credentials", function(){
-            document.getElementById("submitButton").click();
-            expect(loginChecker).toBe(false);
-        });
-    });
 </script>
 
 
-</body>
 <footer>
-    <ul>
-        <li><a href="about">about us</a></li>
-    </ul>
+	<ul>
+		<li><a href="about">about us</a></li>
+	</ul>
 </footer>
 </html>

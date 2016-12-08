@@ -3,21 +3,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
     <title>Sign Up</title>
     <link rel="stylesheet" href="webStyles.css">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://fb.me/react-15.0.0.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-with-addons.js"></script>
     <script src="https://fb.me/react-dom-15.0.0.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
     <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/jasmine-html.js"></script>
-    <script type="text/javascript" src="jasmine/lib/jasmine-2.5.2/boot.js"></script>
-    <link rel="stylesheet" type="text/css" href="jasmine/lib/jasmine-2.5.2/jasmine.css">
 </head>
 
 <header>
@@ -43,12 +37,7 @@
         </div>
     </section>
 
-
-
-    <input type="text" id="firstName" name="firstName" placeholder="First Name" pattern="\S+"><br>
-    <input type="text" id="lastName" name="lastName" placeholder="Last Name" pattern="\S+"><br><br>
-    <input type="email" id="email" name="email" placeholder="Email" pattern=".+@.+\.com"><br>
-    <input type="password" id="password" name="password" placeholder="Password" pattern="\S+"><br><br>
+    <div id="content"></div>
 
     <p>
         Gender<br>
@@ -93,17 +82,17 @@
 
         function show(id) {
             $('.tab')// Select all elements with tab class
-                .removeClass('selected')// Remove the "selected" class
-                .filter // Filter all tabs with function below
-                (function () {
-                    return (this.hash === id);
-                }) // Add the tag with the corresponding link
-                .addClass('selected');
+                    .removeClass('selected')// Remove the "selected" class
+                    .filter // Filter all tabs with function below
+                    (function () {
+                        return (this.hash === id);
+                    }) // Add the tag with the corresponding link
+                    .addClass('selected');
 
             $('.panel')// Select elements with class "panel"
-                .hide() // Hide all elements with class "panel"
-                .filter(id) // Select the element with the filtered id
-                .show(); // Unhide element that has been selected
+                    .hide() // Hide all elements with class "panel"
+                    .filter(id) // Select the element with the filtered id
+                    .show(); // Unhide element that has been selected
         }
 
         // Calls the functions above when the # changes
@@ -132,35 +121,44 @@
             alert("Your account has been successfully created.");
         });
 
-        describe("signup", function(){
-            var TestUtils = React.addons.TestUtils;
-            var firstName, lastName, email, password, gender, grade;
-            var signupComp;
+        var regForm = React.createClass({
+            getInitialState: function(){
+              return{inputValue: []};
+            },
+            handleSubmit: function(e) {
+                accountRef.push({
+                    "First Name": this.state.FirstName,
+                    "Last Name": this.state.LastName,
+                    "Email": this.state.Email,
+                    "Password": this.state.Password
+                });
+                alert("Your account has been successfully created.");
+            },
 
-            beforeEach(function(){
-                document.getElementsByName("firstName").value = 'Mister';
-                document.getElementsByName("lastName").value = 'Tester';
-                document.getElementsByName("email").value = 'misterTester@site.com';
-                document.getElementsByName("password").value = 'lemon';
-                document.getElementsByName("gender").value = 'male';
-                document.getElementsByName("grade").value = 'senior';
-                signupComp = TestUtils.renderIntoDocument(element);
+            render: function() {
+                return (
+                        <form>
+                            <input type="text" value={this.state.value} onChange={this.updateInputValue} placeholder="First Name" pattern="\S+"/>
+                            <input type="text"  value={this.state.value} onChange={this.updateInputValue} placeholder="Last Name" pattern="\S+"/>
 
-                spyOn(signupComp.ref.child('accounts'),"push");
-            });
-            it("Pushed into Firebase", function(){
-                let submitButton = TestUtils.findRenderedDOMComponentWithTag(signupComp,"submitButton");
-                TestUtils.Simulate.click(submitButton);
-                expect(loginComponent.ref.push).toHaveBeenCalled();
-            });
+                            <input type="email" value={this.state.value} onChange={this.updateInputValue} placeholder="Email" pattern=".+@.+\.com"/>
+                            <input type="password" value={this.state.value} onChange={this.updateInputValue} placeholder="Password" pattern="\S+"/>
+                        </form>
+                );
+            },
+            updateInputValue: function(evt){
+                this.setState({inputValue: evt.target.value});
+            }
         });
+
+        ReactDOM.render(<regForm/>, document.getElementById('content'));
 
     </script>
 </form>
 </body>
 <footer>
-    <ul>
-        <li><a href="about">about us</a></li>
-    </ul>
+	<ul>
+		<li><a href="about">about us</a></li>
+	</ul>
 </footer>
 </html>

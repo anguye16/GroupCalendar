@@ -27,7 +27,7 @@ footer{
     position: fixed;
     bottom: 0;
 
-    z-index: -1;
+    z-index: 1;
     width: 98%;
     background-color: darkgray;
 }
@@ -107,7 +107,7 @@ table{
 }
 
 th, td {
-
+	
     padding: 10px 50px 10px;
     text-align: left;
     border-bottom: 1px solid darkgrey;
